@@ -27,7 +27,7 @@ def compare_distrib(X_train,X_test):
 
 #-----------Make predictions & report the performances: -----------
 
-def predict_and_report(estimator,X,y,set=None,model=None):
+def predict_and_report(estimator,X,y,set=None):
     y_pred= estimator.predict(X)
     y_pred_proba= estimator.predict_proba(X)
     TN = confusion_matrix(y, y_pred)[0, 0]
@@ -40,12 +40,6 @@ def predict_and_report(estimator,X,y,set=None,model=None):
     Se = TP / (TP + FN)
     SP=TP / (TP + FN)
     F1 = 2 * Se * PPV / (Se + PPV)
-    if model=='LR':
-        #print("Loss is {:.2f}".format(log_loss(y, y_pred_proba)))
-        LOSS=log_loss(y, y_pred_proba)
-    if model=='SVM':
-        #print("Loss is {:.2f}".format(hinge_loss(y,estimator.decision_function(X))))
-        LOSS=hinge_loss(y,estimator.decision_function(X))
     plot_confusion_matrix(estimator,X,y, cmap=plt.cm.Blues)
     plt.title(set)
     plt.show()
@@ -56,7 +50,7 @@ def predict_and_report(estimator,X,y,set=None,model=None):
 #-------------Summarize the performances within a table: ----------------
 
 
-def Model_Comparison_Table(Table_Data, Title):
+def Model_Comparison_Table(Table_Data, Title,n_models=4):
     """
     Compares the scores of the best estimators from all the models we tried out.
     :param Table_Data: Table of the scores from the classifiers we want to compare.
@@ -67,8 +61,12 @@ def Model_Comparison_Table(Table_Data, Title):
     a = Table_Data.shape[1]
     #plt.figure(figsize=(10, 14))
     fig, ax = plt.subplots(1, 1)
+    if n_models==7:
+        rows=['LogReg', 'Linear SVC', 'Non-Linear SVC','RFC','LDA','DT','KNN']
+    else:
+        rows=['LogReg', 'Linear SVC', 'Non-Linear SVC','RFC']
     table = ax.table(cellText=Table_Data,
-                     rowLabels=['LogReg', 'Linear SVC', 'Non-Linear SVC','RFC'],
+                     rowLabels= rows,
                      colLabels=['Se','Sp','PPV','NPV','Accuracy', 'F1', 'AUC'],
                      colColours=["salmon"] * 7, rowColours=["skyblue"] * a,
                      cellLoc='center', loc='upper center')
